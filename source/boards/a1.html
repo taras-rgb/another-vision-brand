@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A1 Iterations</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{font-family:Onest,system-ui,sans-serif;background:#E9E8E4;color:#16181D;padding:40px 16px 60px;-webkit-font-smoothing:antialiased}
+  .page{max-width:1240px;margin:0 auto;display:grid;gap:60px}
+  .bhead{display:grid;grid-template-columns:1fr 1.3fr;gap:24px;margin-bottom:14px;align-items:end}
+  .bhead h2{font-size:26px;font-weight:400;letter-spacing:-.03em}
+  .bhead p{font-size:13px;color:#5C616B;line-height:1.55}
+  .rules{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .rules span{font-family:'Geist Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;background:#fff;border-radius:99px;padding:4px 9px;color:#5C616B}
+  .board{border-radius:22px;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:240px;gap:10px}
+  .t{border-radius:14px;overflow:hidden;position:relative;padding:20px;display:flex;flex-direction:column;justify-content:space-between}
+  .w2{grid-column:span 2}.h2{grid-row:span 2}
+  .img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .z{position:relative;z-index:1}
+  .lab{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+  .lab i{width:7px;height:7px;flex:none;margin-top:3px}
+  .num{font-weight:300;letter-spacing:-.05em;line-height:.95}
+  .ic svg{display:block;width:auto}
+  .marker{position:absolute;z-index:2;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+  .marker b{width:14px;height:14px;display:grid;place-items:center}
+  .marker b::after{content:"";width:4px;height:4px;border-radius:50%}
+  .sw{display:grid;gap:6px}
+  .sw div{display:flex;justify-content:space-between;align-items:center;border-radius:8px;padding:8px 10px;font-size:11px}
+  .sw b{font-weight:500}
+  .h{font-weight:300;letter-spacing:-.035em;line-height:1.05}
+  .cap{font-size:11px;line-height:1.45}
+  .btn{display:inline-flex;border-radius:99px;padding:9px 16px;font-size:12px;font-weight:500}
+  .nav{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+  .nav .l{display:flex;gap:16px;opacity:.7}
+  .grid-bg{background-image:linear-gradient(var(--gl) 1px,transparent 1px),linear-gradient(90deg,var(--gl) 1px,transparent 1px);background-size:24px 24px}
+  @media (max-width:900px){.board{grid-template-columns:1fr 1fr}.bhead{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<!-- duotone filters: shadows -> first colour, highlights -> second -->
+<svg width="0" height="0" style="position:absolute">
+  <filter id="duo-ember" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .33 .33 0 0  .33 .33 .33 0 0  .33 .33 .33 0 0  0 0 0 1 0"/>
+    <feComponentTransfer><feFuncR type="linear" slope="1.45" intercept="-.28"/><feFuncG type="linear" slope="1.45" intercept="-.28"/><feFuncB type="linear" slope="1.45" intercept="-.28"/></feComponentTransfer>
+    <feComponentTransfer><feFuncR type="table" tableValues="0.055 0.898 0.98"/><feFuncG type="table" tableValues="0.102 0.376 0.86"/><feFuncB type="table" tableValues="0.169 0.18 0.75"/></feComponentTransfer>
+  </filter>
+  <filter id="duo-sky" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .33 .33 0 0  .33 .33 .33 0 0  .33 .33 .33 0 0  0 0 0 1 0"/>
+    <feComponentTransfer><feFuncR type="table" tableValues="0.035 0.106 0.612 0.92"/><feFuncG type="table" tableValues="0.071 0.2 0.776 0.96"/><feFuncB type="table" tableValues="0.125 0.314 0.867 0.98"/></feComponentTransfer>
+  </filter>
+</svg>
+<div class="page" id="page"></div>
+<script>
+/* ---------- palettes ---------- */
+const C={night:'#0E1A2B',deep:'#091321',dusk:'#1B3350',sky:'#9CC6DD',pale:'#DCEBF2',ember:'#E5602E',rust:'#B3431D',cream:'#F4EDE4',sand:'#E8DCCB',white:'#FFFFFF'};
+
+/* ---------- line drawings (stroke = currentColor) ---------- */
+const LINE={
+ villa:`<svg viewBox="0 0 200 96" fill="none" stroke="currentColor" stroke-width=".9" style="width:100%"><path d="M6 86H194"/><path d="M22 86V46L60 32H120V86"/><path d="M14 48L62 30H128"/><path d="M120 86V56H180V86"/><path d="M114 56H186"/><path d="M32 52H110V82H32Z"/><path d="M52 52V82M72 52V82M92 52V82"/><path d="M130 64H170V82H130Z"/><path d="M10 92Q100 88 190 92" opacity=".45"/></svg>`,
+ browser:`<svg viewBox="0 0 200 96" fill="none" stroke="currentColor" stroke-width=".9" style="width:100%"><rect x="20" y="8" width="160" height="72" rx="4"/><path d="M20 18H180"/><circle cx="27" cy="13" r="1.4"/><circle cx="33" cy="13" r="1.4"/><circle cx="39" cy="13" r="1.4"/><path d="M32 30H110M32 38H90"/><rect x="32" y="48" width="44" height="22"/><rect x="82" y="48" width="44" height="22"/><rect x="132" y="48" width="36" height="22"/><path d="M8 88H192"/></svg>`,
+ tower:`<svg viewBox="0 0 200 96" fill="none" stroke="currentColor" stroke-width=".9" style="width:100%"><path d="M4 90H196"/><path d="M70 90V14L110 6V90"/><path d="M110 90V30H150V90"/><path d="M40 90V48H70"/>${[20,30,40,50,60,70,80].map(y=>`<path d="M76 ${y}H104"/>`).join('')}${[40,52,64,76].map(y=>`<path d="M116 ${y}H144"/>`).join('')}<path d="M46 58H64M46 70H64"/></svg>`,
+ plan:`<svg viewBox="0 0 200 96" fill="none" stroke="currentColor" stroke-width=".9" style="width:100%"><rect x="30" y="8" width="140" height="80"/><path d="M30 46H96V88M96 8V30M124 46H170M124 46V88"/><path d="M96 38A8 8 0 0 1 104 46" /><path d="M116 46A8 8 0 0 1 124 54"/><circle cx="62" cy="27" r="9"/><path d="M140 20H160V34H140Z"/></svg>`,
+};
+const ticksRing=(col,op=.55)=>{let s='';for(let i=0;i<72;i++){const a=i/72*Math.PI*2,r1=i%6?79:74,r2=84;s+=`<line x1="${(100+Math.cos(a)*r1).toFixed(1)}" y1="${(100+Math.sin(a)*r1).toFixed(1)}" x2="${(100+Math.cos(a)*r2).toFixed(1)}" y2="${(100+Math.sin(a)*r2).toFixed(1)}"/>`}
+  return `<svg viewBox="0 0 200 200" fill="none" stroke="${col}" stroke-width=".7" style="position:absolute;width:92%;opacity:${op}">${s}<circle cx="100" cy="100" r="60" opacity=".5"/></svg>`};
+const bars=(cols,acc)=>{const v=[22,26,24,31,35,33,40,46,44,52,61,72];return `<svg viewBox="0 0 400 110" style="width:100%;flex:1">${v.map((x,i)=>`<rect x="${i*33+4}" y="${110-x*1.4}" width="12" height="${x*1.4}" rx="2" fill="${i===11?acc:cols}"/>`).join('')}</svg>`};
+const line=(col,acc,grid)=>{const v=[22,26,24,31,35,33,40,46,44,52,61,72];const pts=v.map((x,i)=>`${i*35+10},${100-x*1.2}`).join(' ');
+  return `<svg viewBox="0 0 400 110" style="width:100%;flex:1" fill="none">${grid?[20,45,70,95].map(y=>`<path d="M0 ${y}H400" stroke="${grid}" stroke-width=".6"/>`).join(''):''}<polyline points="${pts}" stroke="${col}" stroke-width="1.4"/>${v.map((x,i)=>`<circle cx="${i*35+10}" cy="${100-x*1.2}" r="${i===11?4.5:1.8}" fill="${i===11?acc:col}" stroke="none"/>`).join('')}</svg>`};
+const lab=(t,dot,col)=>`<div class="lab" style="color:${col||'inherit'}"><i style="background:${dot}"></i>${t}</div>`;
+const logo=(n,h,col,extra='')=>`<div class="ic" data-svg="${n}" data-h="${h}" style="color:${col};${extra}"></div>`;
+const swatches=list=>`<div class="sw">${list.map(([n,c,fg,b])=>`<div style="background:${c};color:${fg};${b?'border:1px solid '+b:''}"><b>${n}</b>${c.toUpperCase()}</div>`).join('')}</div>`;
+const markers=(items,sq,dot,txt)=>items.map(([t,x,y])=>`<div class="marker" style="left:${x}%;top:${y}%"><span class="lab" style="color:${txt}">${t}</span><b style="background:${sq}"></b></div>`).join('').replace(/<b style="background:([^"]+)"><\/b>/g,`<b style="background:$1"><span style="width:4px;height:4px;border-radius:50%;background:${dot}"></span></b>`);
+
+/* ---------- boards ---------- */
+const B=[];
+const MON=['J','F','M','A','M','J','J','A','S','O','N','D'], VAL=[22,26,24,31,35,33,40,46,44,52,61,72];
+const blurImg=(img,b=16,f='')=>`<img class="img" src="img/${img}" style="filter:blur(${b}px) saturate(1.05) ${f};inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px)">`;
+const glassWrap=(inner,ist='')=>`<div class="z" style="height:100%;border-radius:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:16px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;${ist}">${inner}</div>`;
+
+/* charts (all on Night) */
+const chartDots=()=>{let s='';VAL.forEach((v,i)=>{const n=Math.round(v/6);for(let k=0;k<n;k++){s+=`<circle cx="${i*46+17}" cy="${150-k*12}" r="${i===11?4.6:3.6}" fill="${i===11?C.ember:'rgba(255,255,255,'+(.35+i*.05)+')'}"/>`}});
+  return `<svg viewBox="0 0 560 190" style="width:100%;height:auto;display:block;margin-top:auto">${s}${MON.map((m,i)=>`<text x="${i*46+17}" y="182" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.45)" font-family="Onest">${m}</text>`).join('')}
+  <text x="550" y="${150-12*12-10}" text-anchor="end" font-size="13" fill="#fff" font-family="Onest">72 leads</text></svg>`};
+const chartArea=()=>{const pts=VAL.map((v,i)=>[i*47+14,150-v*1.65]);const d='M'+pts.map(p=>p.join(' ')).join(' L');
+  return `<svg viewBox="0 0 560 190" style="width:100%;height:auto;display:block;margin-top:auto"><defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+  ${[40,75,110,150].map(y=>`<path d="M0 ${y}H560" stroke="rgba(255,255,255,.08)"/>`).join('')}
+  <path d="${d} L${pts[11][0]} 150 L${pts[0][0]} 150Z" fill="url(#ga)"/><path d="${d}" fill="none" stroke="#fff" stroke-width="1.8"/>
+  <line x1="${pts[11][0]}" y1="${pts[11][1]}" x2="${pts[11][0]}" y2="150" stroke="${C.ember}" stroke-dasharray="3 4"/>
+  <circle cx="${pts[11][0]}" cy="${pts[11][1]}" r="6" fill="${C.ember}" stroke="${C.night}" stroke-width="3"/>
+  <g transform="translate(${pts[11][0]-96} ${pts[11][1]-12})"><rect width="82" height="26" rx="13" fill="#fff"/><text x="41" y="17.5" text-anchor="middle" font-size="12" fill="${C.night}" font-family="Onest" font-weight="500">72 leads</text></g>
+  ${MON.map((m,i)=>`<text x="${i*47+14}" y="178" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.45)" font-family="Onest">${m}</text>`).join('')}</svg>`};
+const chartBars=()=>`<svg viewBox="0 0 560 190" style="width:100%;height:auto;display:block;margin-top:auto"><path d="M0 150.5H560" stroke="rgba(255,255,255,.18)"/>
+  ${VAL.map((v,i)=>`<rect x="${i*46+11}" y="${150-v*1.75}" width="12" height="${v*1.75}" rx="6" fill="${i===11?C.ember:'rgba(255,255,255,'+(.3+i*.055)+')'}"/>`).join('')}
+  ${[9,10,11].map(i=>`<text x="${i*46+17}" y="${150-VAL[i]*1.75-10}" text-anchor="middle" font-size="12" fill="${i===11?'#fff':'rgba(255,255,255,.6)'}" font-family="Onest">${VAL[i]}</text>`).join('')}
+  ${MON.map((m,i)=>`<text x="${i*46+17}" y="176" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.45)" font-family="Onest">${m}</text>`).join('')}</svg>`;
+const statsTile=chart=>`<div class="t w2 h2" style="background:${C.night};color:#fff;padding:26px;gap:16px;justify-content:flex-start">
+   <div style="display:flex;justify-content:space-between;align-items:flex-start">${lab('Enquiries from new websites',C.ember)}<span style="font-size:12px;background:rgba(255,255,255,.1);border-radius:99px;padding:4px 10px">Last 12 months</span></div>
+   <div class="num" style="font-size:80px">+38%</div><div style="height:1px;background:rgba(255,255,255,.12)"></div>
+   ${lab('Monthly qualified leads',C.ember)}${chart}<div style="height:1px;background:rgba(255,255,255,.12)"></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+     <div style="display:grid;gap:12px">${lab('Avg. session',C.ember)}<div class="num" style="font-size:42px">2m 40s</div></div>
+     <div style="display:grid;gap:12px;border-left:1px solid rgba(255,255,255,.12);padding-left:18px">${lab('Page load',C.ember)}<div class="num" style="font-size:42px">0.9s</div></div></div></div>`;
+const annotated=(img,pos,mk,scrim)=>`<div class="t w2 h2" style="padding:0"><img class="img" src="img/${img}" style="${pos}">${scrim?`<div style="position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(14,26,43,.45),rgba(14,26,43,.15) 45%,rgba(14,26,43,.6))"></div>`:''}
+   ${markers(mk,C.cream,C.night,'#fff')}
+   ${logo('lockup-horizontal-ink',22,'#fff','position:absolute;left:22px;bottom:20px;z-index:2')}</div>`;
+const pal=`<div class="t" style="background:${C.cream};color:${C.night}">${lab('Palette',C.ember)}${swatches([['Night',C.night,'#fff'],['Cream',C.cream,C.night,'#d9cfc2'],['Haze','#C9C2BA',C.night],['Ember',C.ember,'#fff'],['Sky',C.sky,C.night]])}</div>`;
+const icons=img=>`<div class="t" style="background:${C.cream};flex-direction:row;align-items:center;justify-content:center;gap:14px">
+  <div style="width:84px;height:84px;border-radius:20px;background:${C.night};display:grid;place-items:center">${logo('symbol-ink',54,'#fff')}</div>
+  <div style="width:84px;height:84px;border-radius:20px;overflow:hidden;position:relative;display:grid;place-items:center"><img src="img/${img}" style="position:absolute;inset:-20px;width:124px;height:124px;object-fit:cover;filter:blur(10px)">${logo('symbol-small-ink',54,'#fff','position:relative')}</div></div>`;
+const quote=(q,n,r,bg=C.cream,fg=C.night)=>`<div class="t" style="background:${bg};color:${fg}"><svg width="26" height="20" viewBox="0 0 26 20" fill="${C.ember}"><path d="M0 20V11Q0 2 9 0V5Q5 6 5 10H10V20ZM15 20V11Q15 2 24 0V5Q20 6 20 10H25V20Z"/></svg>
+  <div style="font-size:16.5px;font-weight:300;line-height:1.35;letter-spacing:-.01em">${q}</div><div style="font-size:12px"><b style="font-weight:500">${n}</b><br><span style="opacity:.6">${r}</span></div></div>`;
+const site=(right,bg=C.cream,fg=C.night)=>`<div class="t w2" style="background:${bg};color:${fg};flex-direction:row;gap:18px;padding:20px">
+   <div style="flex:1.3;display:flex;flex-direction:column;justify-content:space-between">${logo('lockup-horizontal-ink',22,fg)}<div class="h" style="font-size:36px">AI-native studio for<br>real estate businesses.</div></div>${right}</div>`;
+const sharp=(img,pos,cap)=>`<div class="t" style="padding:0"><img class="img" src="img/${img}" style="${pos}"><div class="z" style="position:absolute;left:14px;bottom:14px;background:rgba(14,26,43,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:#fff;border-radius:99px;padding:6px 12px;font-size:12px">${cap}</div></div>`;
+const logosTile=`<div class="t" style="background:${C.cream};color:${C.night}">${lab('Trusted by',C.ember)}
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px 18px;align-items:center">
+   <img src="logos/avg-wordmark.svg" style="height:9px;opacity:.85;filter:brightness(0)"><img src="logos/d5.svg" style="height:16px;opacity:.85;filter:brightness(0)"><img src="logos/arcway.svg" style="height:17px;opacity:.85;filter:brightness(0)">
+   <img src="logos/stemwave.png" style="height:16px;opacity:.85;filter:brightness(0)"><img src="logos/omnilex.svg" style="height:16px;opacity:.85;filter:brightness(0)"><img src="logos/handshake.svg" style="height:13px;opacity:.85;filter:brightness(0)"></div></div>`;
+const avgQ='After two years of struggling with agencies and freelancers, he came in with a clear plan and delivered in just six weeks.';
+
+/* A1.1 · Dots */
+B.push({id:'a11',ttl:'A1.1 · Dot chart, real work in the middle',dsc:'Same A1 base. The chart becomes columns of dots, the mark\'s own language, with month labels and one Ember column. The middle row now has three different kinds of card: glass over blur, a sharp real project, and a solid Night card. An approved client quote replaces the "Scale your vision" tile; the button is gone.',
+ rules:['Dot chart','1 glass · 1 sharp · 1 solid','Client quote','No button'], frame:C.deep, tiles:`
+ ${statsTile(chartDots())}
+ ${annotated('mic.png','transform:scale(1.9);transform-origin:44% 34%',[['Brand',13,20],['SEO and AI search',62,26],['Conversion',40,62]])}
+ <div class="t" style="padding:14px">${blurImg('coil.png')}${glassWrap(`<div class="h" style="font-size:21px">Websites that<br>sell the view.</div><div>${LINE.villa}</div>`)}</div>
+ ${sharp('tablet.jpg','object-position:50% 45%','Property platform')}
+ <div class="t" style="background:${C.night};color:#fff"><span class="lab" style="opacity:.7">Floor plan to funnel</span><div>${LINE.plan}</div></div>
+ ${pal}
+ ${quote(avgQ,'Alex Shtefan','Founder, Alex Villas Group')}
+ ${site(`<div class="t" style="flex:1;border-radius:12px;padding:10px">${blurImg('statue.png',14)}${glassWrap(`<span class="lab" style="opacity:.8">Live project</span><div>${LINE.tower}</div>`)}</div>`)}
+ ${icons('coil.png')}`});
+
+/* A1.2 · Area */
+B.push({id:'a12',ttl:'A1.2 · Area chart, property as the hero',dsc:'A smooth area chart with a soft white fill and one Ember endpoint with a value tag. The annotated image is the villa, labelled for developers. The middle row: a sharp D5 project, glass with the mark and compass, and a solid Night tower drawing. Client logos replace the slogan tile; the website tile goes dark.',
+ rules:['Area chart','Villa annotated','Logos tile','Dark website tile'], frame:C.deep, tiles:`
+ ${statsTile(chartArea())}
+ ${annotated('house.png','transform:scale(1.25);transform-origin:40% 55%',[['Listings and floor plans',8,22],['Enquiry form',56,40],['Page speed',30,70]])}
+ ${sharp('d5.jpg','object-position:40% 50%','D5 Renovation, Dubai')}
+ <div class="t" style="padding:14px">${blurImg('papers.png')}${glassWrap(`<div style="position:relative;flex:1;display:grid;place-items:center">${ticksRing('#fff',.6).replace('width:92%','width:118%')}${logo('symbol-ink',62,'#fff','position:relative')}</div>`,'padding:0')}</div>
+ <div class="t" style="background:${C.night};color:#fff"><div class="h" style="font-size:21px">Smarter sites<br>for developers.</div><div>${LINE.tower}</div></div>
+ ${pal}
+ ${logosTile}
+ <div class="t w2" style="padding:0;background:${C.night}"><img class="img" src="img/coil.png" style="filter:blur(26px);inset:-40px;width:calc(100% + 80px);height:calc(100% + 80px);opacity:.8;-webkit-mask-image:linear-gradient(90deg,transparent 25%,#000 70%);mask-image:linear-gradient(90deg,transparent 25%,#000 70%)">
+   <div class="z" style="padding:20px;height:100%;display:flex;gap:18px;color:#fff"><div style="flex:1.3;display:flex;flex-direction:column;justify-content:space-between">${logo('lockup-horizontal-ink',22,'#fff')}<div class="h" style="font-size:31px">AI-native studio for<br>real estate businesses.</div></div>
+   <div style="flex:1;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);padding:14px;display:flex;flex-direction:column;justify-content:space-between"><span class="lab" style="opacity:.8">Floor plan</span><div>${LINE.plan}</div></div></div></div>
+ ${icons('papers.png')}`});
+
+/* A1.3 · Bars refined */
+B.push({id:'a13',ttl:'A1.3 · Refined bars, warm and human',dsc:'Bars kept but refined: rounded, fading in from the left, values on the last three, months below. The annotated image is the sharp property tablet. The middle row: warm glass over the portrait blur, the HOWSR phone, and a Cream villa drawing. A second approved quote replaces the slogan tile.',
+ rules:['Refined bars','Annotated project','Warm glass','Client quote'], frame:C.deep, tiles:`
+ ${statsTile(chartBars())}
+ ${annotated('tablet.jpg','transform:scale(1.35);transform-origin:52% 45%',[['3D configurator',10,14],['Live pricing',60,20],['Mobile first',22,62]],true)}
+ <div class="t" style="padding:14px">${blurImg('mic.png',18)}${glassWrap(`<div class="h" style="font-size:21px">Built in Framer,<br>run by your team.</div><div>${LINE.browser}</div>`)}</div>
+ ${sharp('phone.jpg','object-position:50% 30%','HOWSR app')}
+ <div class="t" style="background:${C.cream};color:${C.night}"><div class="h" style="font-size:21px">Websites that<br>sell the view.</div><div>${LINE.villa}</div></div>
+ ${pal}
+ ${quote('We had the pleasure of working with Taras on a Framer web development project, and he was an outstanding partner from start to finish.','Beth Marrier Laggett','Senior Director, Operations at Handshake')}
+ ${site(`<div class="t" style="flex:1;border-radius:12px;padding:10px">${blurImg('road.png',14)}${glassWrap(`<span class="lab" style="opacity:.8">Live project</span><div>${LINE.villa}</div>`)}</div>`)}
+ ${icons('mic.png')}`});
+const only=location.hash.slice(1), page=document.getElementById('page');
+B.filter(b=>!only||b.id===only).forEach(b=>page.insertAdjacentHTML('beforeend',`<section id="${b.id}"><div class="bhead"><div><h2>${b.ttl}</h2><div class="rules">${b.rules.map(r=>`<span>${r}</span>`).join('')}</div></div><p>${b.dsc}</p></div><div class="board" style="background:${b.frame}">${b.tiles}</div></section>`));
+
+const cache={}; const get=n=>cache[n]||(cache[n]=fetch(n+'.svg').then(r=>r.text()));
+document.querySelectorAll('[data-svg]').forEach(async el=>{let s=await get(el.dataset.svg);
+  s=s.replace(/#16181D/gi,'currentColor').replace(/\swidth="[^"]*"/,'').replace(/\sheight="[^"]*"/,` height="${el.dataset.h}"`); el.innerHTML=s;});
+</script>
+</body>
+</html>

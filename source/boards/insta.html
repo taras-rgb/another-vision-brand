@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Instagram Posts</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{--ember:#E5602E;--rust:#7E2A12;--char:#232427;--night:#0E1A2B;--sky:#9CC6DD}
+  *{box-sizing:border-box;margin:0}
+  body{font-family:Onest,system-ui,sans-serif;background:#111;-webkit-font-smoothing:antialiased;color:#fff}
+  .post{width:1080px;height:1350px;position:relative;overflow:hidden}
+  .img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .lab{font-size:19px;font-weight:400;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+  .card{position:absolute;border-radius:18px;overflow:hidden}
+  .ic svg{display:block;width:auto}
+  .light{font-weight:300;letter-spacing:-.04em;line-height:1.02}
+  #all{display:flex;gap:40px;padding:60px;width:max-content}
+  #all .post{transform-origin:0 0}
+</style>
+</head>
+<body>
+<div id="all">
+
+<!-- POST 1 · twilight photo with floating cards -->
+<div class="post" id="p1" style="background:var(--night)">
+  <img class="img" src="img/road.png" style="object-position:60% 40%;filter:saturate(.85) brightness(.82) contrast(1.06)">
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,26,43,.35) 0%,rgba(14,26,43,0) 35%,rgba(14,26,43,0) 55%,rgba(14,26,43,.75) 100%)"></div>
+  <!-- orange app card -->
+  <div class="card" style="left:72px;top:150px;width:470px;height:300px;background:linear-gradient(160deg,#EE7240 0%,var(--ember) 35%,var(--rust) 100%)">
+    <div class="lab" style="position:absolute;left:30px;top:26px;font-size:15px">Studio</div>
+    <div style="position:absolute;left:52px;right:52px;top:92px;height:150px;border-radius:24px;background:rgba(80,24,8,.38);display:flex;align-items:center;gap:22px;padding:0 24px">
+      <div style="width:100px;height:100px;border-radius:22px;background:#0B0C0E;display:grid;place-items:center"><div class="ic" data-svg="symbol-ink" data-h="64" style="color:#fff"></div></div>
+      <div><div style="font-size:22px;font-weight:500">another vision</div><div style="font-size:15px;opacity:.65;margin-top:4px">AI-native web studio</div>
+        <div style="margin-top:14px;display:inline-block;background:#fff;color:var(--rust);font-size:14px;font-weight:500;border-radius:99px;padding:6px 16px">Book a call</div></div>
+    </div>
+  </div>
+  <!-- charcoal stat card -->
+  <div class="card" style="right:72px;top:560px;width:330px;height:390px;background:var(--char);padding:30px;display:flex;flex-direction:column;justify-content:space-between">
+    <div class="lab" style="font-size:15px">Delivery</div>
+    <div><div class="light" style="font-size:96px">6</div><div style="font-size:26px;font-weight:300;line-height:1.15;margin-top:6px">weeks from brief<br>to a live website</div></div>
+    <div style="font-size:15px;opacity:.5">01</div>
+  </div>
+  <div style="position:absolute;left:72px;bottom:96px;right:72px">
+    <div class="light" style="font-size:78px">Websites that bring<br>property into focus.</div>
+    <div class="ic" data-svg="lockup-horizontal-ink" data-h="34" style="color:#fff;margin-top:44px"></div>
+  </div>
+</div>
+
+<!-- POST 2 · orange gradient with white line drawing -->
+<div class="post" id="p2" style="background:linear-gradient(165deg,#EF7643 0%,var(--ember) 30%,#B6431C 65%,var(--rust) 100%)">
+  <div class="lab" style="position:absolute;left:72px;top:72px">Project</div>
+  <div class="lab" style="position:absolute;right:72px;top:72px;opacity:.6">Bali</div>
+  <svg viewBox="0 0 900 640" fill="none" stroke="#fff" stroke-width="1.6" style="position:absolute;left:90px;top:300px;width:900px;opacity:.95">
+    <path d="M0 560H900"/>
+    <path d="M90 560V250L270 170H560V560"/>
+    <path d="M50 262L280 158H600"/>
+    <path d="M560 560V330H840V560"/><path d="M530 330H870"/>
+    <path d="M130 290H520V540H130Z"/><path d="M228 290V540M326 290V540M424 290V540"/>
+    <path d="M600 380H800V540H600Z"/><path d="M700 380V540"/>
+    <path d="M270 170V250M90 250H560" opacity=".55"/>
+    <path d="M40 600Q450 585 860 600" opacity=".45"/><path d="M120 620Q450 610 780 620" opacity=".3"/>
+    <path d="M610 560H850V600H610" opacity=".5"/>
+  </svg>
+  <div style="position:absolute;left:72px;bottom:96px;right:72px;display:flex;justify-content:space-between;align-items:flex-end">
+    <div><div class="light" style="font-size:72px">Villa launch site</div><div style="font-size:26px;font-weight:300;opacity:.8;margin-top:14px">Property CMS, listings and enquiries<br>in one Framer website.</div></div>
+    <div style="font-size:19px;opacity:.6">04</div>
+  </div>
+</div>
+
+<!-- POST 3 · charcoal with big number + sky card -->
+<div class="post" id="p3" style="background:var(--char)">
+  <div class="lab" style="position:absolute;left:72px;top:72px">Results</div>
+  <div class="ic" data-svg="symbol-small-ink" data-h="40" style="position:absolute;right:72px;top:62px;color:#fff"></div>
+  <div style="position:absolute;left:72px;top:250px">
+    <div class="light" style="font-size:250px;letter-spacing:-.06em">6 wks</div>
+    <div style="font-size:34px;font-weight:300;line-height:1.2;margin-top:24px;opacity:.85">From brief to a live website<br>for Alex Villas Group, Bali.</div>
+  </div>
+  <div class="card" style="left:72px;right:72px;bottom:96px;height:380px;background:linear-gradient(180deg,var(--night) 0%,#3E6787 55%,#CFE3EE 100%);padding:30px">
+    <div class="lab" style="font-size:15px">Website</div>
+    <svg viewBox="0 0 600 220" fill="none" stroke="#fff" stroke-width="1.4" style="position:absolute;left:180px;top:70px;width:576px">
+      <rect x="0" y="0" width="600" height="220" rx="12"/><path d="M0 34H600"/><circle cx="22" cy="17" r="4"/><circle cx="40" cy="17" r="4"/><circle cx="58" cy="17" r="4"/>
+      <path d="M40 80H300M40 104H220"/><rect x="40" y="132" width="160" height="62"/><rect x="220" y="132" width="160" height="62"/><rect x="400" y="132" width="160" height="62"/>
+    </svg>
+    <div style="position:absolute;left:30px;bottom:26px;font-size:15px;opacity:.7">anothervisionlab.com</div>
+  </div>
+</div>
+
+</div>
+<script>
+const only=location.hash.slice(1);
+if(only){document.querySelectorAll('.post').forEach(p=>{if(p.id!==only)p.style.display='none'});document.getElementById('all').style.padding='0';}
+const cache={}; const get=n=>cache[n]||(cache[n]=fetch(n+'.svg').then(r=>r.text()));
+document.querySelectorAll('[data-svg]').forEach(async el=>{let s=await get(el.dataset.svg);
+  s=s.replace(/#16181D/gi,'currentColor').replace(/\swidth="[^"]*"/,'').replace(/\sheight="[^"]*"/,` height="${el.dataset.h}"`); el.innerHTML=s;});
+</script>
+</body>
+</html>

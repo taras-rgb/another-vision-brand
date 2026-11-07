@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Twilight Balanced</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0}
+  body{font-family:Onest,system-ui,sans-serif;background:#E9E8E4;color:#16181D;padding:40px 16px 60px;-webkit-font-smoothing:antialiased}
+  .page{max-width:1240px;margin:0 auto;display:grid;gap:60px}
+  .bhead{display:grid;grid-template-columns:1fr 1.3fr;gap:24px;margin-bottom:14px;align-items:end}
+  .bhead h2{font-size:26px;font-weight:400;letter-spacing:-.03em}
+  .bhead p{font-size:13px;color:#5C616B;line-height:1.55}
+  .rules{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .rules span{font-family:'Geist Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:.06em;background:#fff;border-radius:99px;padding:4px 9px;color:#5C616B}
+  .board{border-radius:22px;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:240px;gap:10px}
+  .t{border-radius:14px;overflow:hidden;position:relative;padding:20px;display:flex;flex-direction:column;justify-content:space-between}
+  .w2{grid-column:span 2}.h2{grid-row:span 2}
+  .img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .z{position:relative;z-index:1}
+  .lab{font-family:'Geist Mono',monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:8px;align-items:flex-start;line-height:1.5}
+  .lab i{width:7px;height:7px;flex:none;margin-top:3px}
+  .num{font-weight:300;letter-spacing:-.05em;line-height:.95}
+  .ic svg{display:block;width:auto}
+  .marker{position:absolute;z-index:2;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+  .marker b{width:14px;height:14px;display:grid;place-items:center}
+  .marker b::after{content:"";width:4px;height:4px;border-radius:50%}
+  .sw{display:grid;gap:6px}
+  .sw div{display:flex;justify-content:space-between;align-items:center;border-radius:8px;padding:8px 10px;font-size:11px}
+  .sw b{font-weight:500}
+  .h{font-weight:300;letter-spacing:-.035em;line-height:1.05}
+  .cap{font-size:11px;line-height:1.45}
+  .btn{display:inline-flex;border-radius:99px;padding:9px 16px;font-size:12px;font-weight:500}
+  .nav{display:flex;justify-content:space-between;align-items:center;font-size:12px}
+  .nav .l{display:flex;gap:16px;opacity:.7}
+  .grid-bg{background-image:linear-gradient(var(--gl) 1px,transparent 1px),linear-gradient(90deg,var(--gl) 1px,transparent 1px);background-size:24px 24px}
+  @media (max-width:900px){.board{grid-template-columns:1fr 1fr}.bhead{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<!-- duotone filters: shadows -> first colour, highlights -> second -->
+<svg width="0" height="0" style="position:absolute">
+  <filter id="duo-ember" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .33 .33 0 0  .33 .33 .33 0 0  .33 .33 .33 0 0  0 0 0 1 0"/>
+    <feComponentTransfer><feFuncR type="linear" slope="1.45" intercept="-.28"/><feFuncG type="linear" slope="1.45" intercept="-.28"/><feFuncB type="linear" slope="1.45" intercept="-.28"/></feComponentTransfer>
+    <feComponentTransfer><feFuncR type="table" tableValues="0.055 0.898 0.98"/><feFuncG type="table" tableValues="0.102 0.376 0.86"/><feFuncB type="table" tableValues="0.169 0.18 0.75"/></feComponentTransfer>
+  </filter>
+  <filter id="duo-sky" color-interpolation-filters="sRGB">
+    <feColorMatrix type="matrix" values=".33 .33 .33 0 0  .33 .33 .33 0 0  .33 .33 .33 0 0  0 0 0 1 0"/>
+    <feComponentTransfer><feFuncR type="table" tableValues="0.035 0.106 0.612 0.92"/><feFuncG type="table" tableValues="0.071 0.2 0.776 0.96"/><feFuncB type="table" tableValues="0.125 0.314 0.867 0.98"/></feComponentTransfer>
+  </filter>
+</svg>
+<div class="page" id="page"></div>
+<script>
+/* ---------- palettes ---------- */
+const C={night:'#0E1A2B',deep:'#091321',dusk:'#1B3350',sky:'#9CC6DD',pale:'#DCEBF2',ember:'#E5602E',rust:'#B3431D',cream:'#F4EDE4',sand:'#E8DCCB',white:'#FFFFFF'};
+
+/* ---------- line drawings (stroke = currentColor) ---------- */
+const LINE={
+ villa:`<svg viewBox="0 0 200 96" fill="none" stroke="currentColor" stroke-width=".9" style="width:100%"><path d="M6 86H194"/><path d="M22 86V46L60 32H120V86"/><path d="M14 48L62 30H128"/><path d="M120 86V56H180V86"/><path d="M114 56H186"/><path d="M32 52H110V82H32Z"/><path d="M52 52V82M72 52V82M92 52V82"/><path d="M130 64H170V82H130Z"/><path d="M10 92Q100 88 190 92" opacity=".45"/></svg>`,
+ browser:`<svg viewBox="0 0 200 96" fill="none" stroke="currentColor" stroke-width=".9" style="width:100%"><rect x="20" y="8" width="160" height="72" rx="4"/><path d="M20 18H180"/><circle cx="27" cy="13" r="1.4"/><circle cx="33" cy="13" r="1.4"/><circle cx="39" cy="13" r="1.4"/><path d="M32 30H110M32 38H90"/><rect x="32" y="48" width="44" height="22"/><rect x="82" y="48" width="44" height="22"/><rect x="132" y="48" width="36" height="22"/><path d="M8 88H192"/></svg>`,
+ tower:`<svg viewBox="0 0 200 96" fill="none" stroke="currentColor" stroke-width=".9" style="width:100%"><path d="M4 90H196"/><path d="M70 90V14L110 6V90"/><path d="M110 90V30H150V90"/><path d="M40 90V48H70"/>${[20,30,40,50,60,70,80].map(y=>`<path d="M76 ${y}H104"/>`).join('')}${[40,52,64,76].map(y=>`<path d="M116 ${y}H144"/>`).join('')}<path d="M46 58H64M46 70H64"/></svg>`,
+ plan:`<svg viewBox="0 0 200 96" fill="none" stroke="currentColor" stroke-width=".9" style="width:100%"><rect x="30" y="8" width="140" height="80"/><path d="M30 46H96V88M96 8V30M124 46H170M124 46V88"/><path d="M96 38A8 8 0 0 1 104 46" /><path d="M116 46A8 8 0 0 1 124 54"/><circle cx="62" cy="27" r="9"/><path d="M140 20H160V34H140Z"/></svg>`,
+};
+const ticksRing=(col,op=.55)=>{let s='';for(let i=0;i<72;i++){const a=i/72*Math.PI*2,r1=i%6?79:74,r2=84;s+=`<line x1="${(100+Math.cos(a)*r1).toFixed(1)}" y1="${(100+Math.sin(a)*r1).toFixed(1)}" x2="${(100+Math.cos(a)*r2).toFixed(1)}" y2="${(100+Math.sin(a)*r2).toFixed(1)}"/>`}
+  return `<svg viewBox="0 0 200 200" fill="none" stroke="${col}" stroke-width=".7" style="position:absolute;width:92%;opacity:${op}">${s}<circle cx="100" cy="100" r="60" opacity=".5"/></svg>`};
+const bars=(cols,acc)=>{const v=[22,26,24,31,35,33,40,46,44,52,61,72];return `<svg viewBox="0 0 400 110" style="width:100%;flex:1">${v.map((x,i)=>`<rect x="${i*33+4}" y="${110-x*1.4}" width="12" height="${x*1.4}" rx="2" fill="${i===11?acc:cols}"/>`).join('')}</svg>`};
+const line=(col,acc,grid)=>{const v=[22,26,24,31,35,33,40,46,44,52,61,72];const pts=v.map((x,i)=>`${i*35+10},${100-x*1.2}`).join(' ');
+  return `<svg viewBox="0 0 400 110" style="width:100%;flex:1" fill="none">${grid?[20,45,70,95].map(y=>`<path d="M0 ${y}H400" stroke="${grid}" stroke-width=".6"/>`).join(''):''}<polyline points="${pts}" stroke="${col}" stroke-width="1.4"/>${v.map((x,i)=>`<circle cx="${i*35+10}" cy="${100-x*1.2}" r="${i===11?4.5:1.8}" fill="${i===11?acc:col}" stroke="none"/>`).join('')}</svg>`};
+const lab=(t,dot,col)=>`<div class="lab" style="color:${col||'inherit'}"><i style="background:${dot}"></i>${t}</div>`;
+const logo=(n,h,col,extra='')=>`<div class="ic" data-svg="${n}" data-h="${h}" style="color:${col};${extra}"></div>`;
+const swatches=list=>`<div class="sw">${list.map(([n,c,fg,b])=>`<div style="background:${c};color:${fg};${b?'border:1px solid '+b:''}"><b>${n}</b>${c.toUpperCase()}</div>`).join('')}</div>`;
+const markers=(items,sq,dot,txt)=>items.map(([t,x,y])=>`<div class="marker" style="left:${x}%;top:${y}%"><span class="lab" style="color:${txt}">${t}</span><b style="background:${sq}"></b></div>`).join('').replace(/<b style="background:([^"]+)"><\/b>/g,`<b style="background:$1"><span style="width:4px;height:4px;border-radius:50%;background:${dot}"></span></b>`);
+
+/* ---------- boards ---------- */
+const B=[];
+// blurred photo + frosted glass + white content
+const glass=(img,inner,opt={})=>`<div class="t ${opt.cls||''}" style="padding:${opt.pad??14}px;${opt.st||''}"><img class="img" src="img/${img}.png" style="filter:blur(${opt.blur||16}px) saturate(${opt.sat||1.05}) ${opt.f||''};inset:-30px;width:calc(100% + 60px);height:calc(100% + 60px)">
+  <div class="z" style="height:100%;border-radius:12px;background:${opt.g||'rgba(255,255,255,.07)'};border:1px solid rgba(255,255,255,.22);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);padding:16px;display:flex;flex-direction:column;justify-content:space-between;color:#fff;${opt.ist||''}">${inner}</div></div>`;
+const stats=(bg,fg,dotc,barc,rule)=>`
+   ${lab('Enquiries from new websites',dotc)}<div class="num" style="font-size:80px">+38%</div><div style="height:1px;background:${rule}"></div>
+   ${lab('Monthly qualified leads',dotc)}${bars(barc,C.ember)}<div style="height:1px;background:${rule}"></div>
+   <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+     <div style="display:grid;gap:14px">${lab('Brief to launch',dotc)}<div class="num" style="font-size:44px">6 weeks</div></div>
+     <div style="display:grid;gap:14px;border-left:1px solid ${rule};padding-left:18px">${lab('Page load',dotc)}<div class="num" style="font-size:44px">0.9s</div></div></div>`;
+const pal=bg=>`<div class="t" style="background:${bg};color:${C.night}">${lab('Palette',C.ember)}${swatches([['Night',C.night,'#fff'],['Cream',C.cream,C.night,'#d9cfc2'],['Haze','#C9C2BA',C.night],['Ember',C.ember,'#fff'],['Sky',C.sky,C.night]])}</div>`;
+const icons=(bg,img)=>`<div class="t" style="background:${bg};flex-direction:row;align-items:center;justify-content:center;gap:14px">
+  <div style="width:84px;height:84px;border-radius:20px;background:${C.night};display:grid;place-items:center">${logo('symbol-ink',54,'#fff')}</div>
+  <div style="width:84px;height:84px;border-radius:20px;overflow:hidden;position:relative;display:grid;place-items:center"><img src="img/${img}.png" style="position:absolute;inset:-20px;width:124px;height:124px;object-fit:cover;filter:blur(10px)">${logo('symbol-small-ink',54,'#fff','position:relative')}</div></div>`;
+const compass=`<div style="position:relative;flex:1;display:grid;place-items:center">${ticksRing('#fff',.6).replace('width:92%','width:118%')}${logo('symbol-ink',62,'#fff','position:relative')}</div>`;
+
+/* A1 · Cream & Night + Glass */
+B.push({id:'A1',ttl:'A1 · Cream & Night, with glass',dsc:'A as the base: Cream and Night solids carry the layout and the data. The social series returns to blurred photography with frosted glass and white line drawings, so the soft layer is always present but never everywhere. Ember stays on small signals.',
+ rules:['Solids for layout','Glass for social','White linework on blur','Ember ≈ 5%','Blue only in photos'], frame:C.deep, tiles:`
+ <div class="t w2 h2" style="background:${C.night};color:#fff;padding:26px;gap:16px;justify-content:flex-start">${stats(C.night,'#fff',C.ember,'rgba(255,255,255,.88)','rgba(255,255,255,.14)')}</div>
+ <div class="t w2 h2" style="padding:0"><img class="img" src="img/mic.png" style="transform:scale(1.9);transform-origin:44% 34%">
+   ${markers([['Brand',13,20],['SEO and AI search',62,26],['Conversion',40,62]],C.cream,C.night,'#fff')}
+   ${logo('lockup-horizontal-ink',22,'#fff','position:absolute;left:22px;bottom:20px;z-index:2')}</div>
+ ${glass('coil',`<div class="h" style="font-size:21px">Websites that<br>sell the view.</div><div>${LINE.villa}</div>`)}
+ ${glass('papers',compass,{ist:'padding:0'})}
+ ${glass('statue',`<div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="num" style="font-size:48px">6 wks</div><div class="cap" style="text-align:right">brief to<br>live site</div></div><div>${LINE.browser}</div>`)}
+ ${pal(C.cream)}
+ <div class="t" style="background:${C.cream};color:${C.night}"><div class="lab" style="justify-content:space-between;width:100%"><span>AV</span><span style="color:${C.ember}">↘</span></div><div style="font-weight:500;font-size:32px;letter-spacing:-.04em;line-height:.95">SCALE YOUR<br>VISION.</div></div>
+ <div class="t w2" style="background:${C.cream};color:${C.night};flex-direction:row;gap:18px;padding:20px">
+   <div style="flex:1.3;display:flex;flex-direction:column;justify-content:space-between"><div class="nav">${logo('lockup-horizontal-ink',22,C.night)}<span class="btn" style="background:${C.night};color:#fff">Book a call</span></div><div class="h" style="font-size:34px">AI-native studio for<br>real estate businesses.</div></div>
+   ${glass('coil',`<span class="lab" style="opacity:.8">Live project</span><div>${LINE.villa}</div>`,{st:'flex:1;border-radius:12px',pad:10})}</div>
+ ${icons(C.cream,'coil')}`});
+
+/* A2 · Warm Haze */
+B.push({id:'A2',ttl:'A2 · Warm Haze',dsc:'Cream leads and the blur turns warm: soft amber and peach fields from the photography, frosted glass with white numbers and line drawings. Night is the anchor for type and one dark tile; blue survives only inside images. The friendliest of the three.',
+ rules:['Cream leads','Warm blur','White on glass','Night as anchor','Blue only in photos'], frame:'#2A2420', tiles:`
+ ${glass('coil',stats('','#fff',C.ember,'rgba(255,255,255,.9)','rgba(255,255,255,.22)'),{cls:'w2 h2',pad:26,blur:26,sat:1.15,f:'brightness(.9)',g:'rgba(42,30,24,.28)',ist:'justify-content:flex-start;gap:16px;padding:22px 24px'})}
+ <div class="t w2 h2" style="padding:0"><img class="img" src="img/mic.png" style="transform:scale(1.9);transform-origin:44% 34%;filter:saturate(.9) sepia(.15)">
+   ${markers([['Brand',13,20],['SEO and AI search',62,26],['Conversion',40,62]],C.cream,C.night,'#fff')}
+   ${logo('lockup-horizontal-ink',22,'#fff','position:absolute;left:22px;bottom:20px;z-index:2')}</div>
+ <div class="t" style="background:${C.cream};color:${C.night}"><div class="h" style="font-size:21px">Websites that<br>sell the view.</div><div>${LINE.villa}</div></div>
+ ${glass('coil',compass,{ist:'padding:0',f:'sepia(.3) hue-rotate(-10deg)'})}
+ <div class="t" style="background:${C.night};color:#fff"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="num" style="font-size:48px">6 wks</div><div class="cap" style="text-align:right;opacity:.7">brief to<br>live site</div></div><div>${LINE.browser}</div></div>
+ ${pal(C.cream)}
+ <div class="t" style="padding:0"><img class="img" src="img/road.png" style="filter:saturate(1.05) brightness(.95)"><div class="z" style="padding:18px;height:100%;display:flex;flex-direction:column;justify-content:space-between;color:#fff"><div class="lab" style="justify-content:space-between;width:100%"><span>AV</span><span>↘</span></div><div style="font-weight:500;font-size:30px;letter-spacing:-.04em;line-height:.95">OPEN<br>NEW<br>DOORS.</div></div></div>
+ <div class="t w2" style="background:${C.cream};color:${C.night};align-items:center;justify-content:center;position:relative"><div style="position:absolute;right:-60px;top:-40px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,${C.ember} 0%,#F2B48C 40%,rgba(244,237,228,0) 70%);filter:blur(24px)"></div>${logo('lockup-horizontal-ink',54,C.night,'position:relative')}</div>
+ ${icons(C.cream,'house')}`});
+
+/* A3 · Evening Balance */
+B.push({id:'A3',ttl:'A3 · Evening Balance',dsc:'An even mix: Night panels for data, Cream for reading, and the blurred twilight (blue into ember) as the atmosphere behind glass and white line drawings. The annotated image is a real property, so the markers speak to developers. Ember marks one thing per tile.',
+ rules:['Night + Cream 50/50','Twilight blur behind glass','White linework','Ember one per tile','Sky ≤ 5%'], frame:C.deep, tiles:`
+ <div class="t w2 h2" style="background:${C.night};color:#fff;padding:26px;gap:16px;justify-content:flex-start">${stats(C.night,'#fff',C.ember,'rgba(255,255,255,.88)','rgba(255,255,255,.14)')}</div>
+ <div class="t w2 h2" style="padding:0"><img class="img" src="img/house.png" style="transform:scale(1.25);transform-origin:40% 55%">
+   ${markers([['Listings and floor plans',8,22],['Enquiry form',56,40],['Page speed',30,70]],C.cream,C.night,'#fff')}
+   ${logo('lockup-horizontal-ink',22,'#fff','position:absolute;left:22px;bottom:20px;z-index:2')}</div>
+ <div class="t" style="background:${C.night};color:#fff"><div class="h" style="font-size:21px">Smarter sites<br>for developers.</div><div>${LINE.tower}</div></div>
+ ${glass('coil',compass,{ist:'padding:0'})}
+ <div class="t" style="background:${C.cream};color:${C.night}"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div class="num" style="font-size:48px;color:${C.ember}">6 wks</div><div class="cap" style="text-align:right">brief to<br>live site</div></div><div>${LINE.browser}</div></div>
+ ${pal(C.cream)}
+ ${glass('road',`<div class="lab" style="justify-content:space-between;width:100%"><span>AV</span><span>↘</span></div><div style="font-weight:500;font-size:30px;letter-spacing:-.04em;line-height:.95">INTO<br>FOCUS.</div>`,{blur:10,g:'rgba(255,255,255,.04)'})}
+ <div class="t w2" style="padding:0;background:${C.night}"><img class="img" src="img/coil.png" style="filter:blur(26px);inset:-40px;width:calc(100% + 80px);height:calc(100% + 80px);opacity:.8;-webkit-mask-image:linear-gradient(90deg,transparent 25%,#000 65%);mask-image:linear-gradient(90deg,transparent 25%,#000 65%)">
+   <div class="z" style="padding:20px;height:100%;display:flex;gap:18px;color:#fff">
+     <div style="flex:1.3;display:flex;flex-direction:column;justify-content:space-between"><div class="nav">${logo('lockup-horizontal-ink',22,'#fff')}</div><div class="h" style="font-size:34px">AI-native studio for<br>real estate businesses.</div><span class="btn" style="background:${C.cream};color:${C.night};align-self:flex-start">Book a call</span></div>
+     <div style="flex:1;border-radius:12px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.06);padding:14px;display:flex;flex-direction:column;justify-content:space-between"><span class="lab" style="opacity:.8">Floor plan</span><div>${LINE.plan}</div></div></div></div>
+ ${icons(C.cream,'coil')}`});
+const only=location.hash.slice(1), page=document.getElementById('page');
+B.filter(b=>!only||b.id===only).forEach(b=>page.insertAdjacentHTML('beforeend',`<section id="${b.id}"><div class="bhead"><div><h2>${b.ttl}</h2><div class="rules">${b.rules.map(r=>`<span>${r}</span>`).join('')}</div></div><p>${b.dsc}</p></div><div class="board" style="background:${b.frame}">${b.tiles}</div></section>`));
+
+const cache={}; const get=n=>cache[n]||(cache[n]=fetch(n+'.svg').then(r=>r.text()));
+document.querySelectorAll('[data-svg]').forEach(async el=>{let s=await get(el.dataset.svg);
+  s=s.replace(/#16181D/gi,'currentColor').replace(/\swidth="[^"]*"/,'').replace(/\sheight="[^"]*"/,` height="${el.dataset.h}"`); el.innerHTML=s;});
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Alex Villas Posts</title>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root{--night:#0E1A2B;--deep:#091321;--cream:#F4EDE4;--ember:#E5602E}
+  *{box-sizing:border-box;margin:0}
+  body{font-family:Onest,system-ui,sans-serif;background:#111;-webkit-font-smoothing:antialiased;color:#fff}
+  .post{width:1080px;height:1350px;position:relative;overflow:hidden}
+  .img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .lab{font-family:'Geist Mono',monospace;font-size:20px;letter-spacing:.08em;text-transform:uppercase;display:flex;gap:14px;align-items:center}
+  .lab i{width:12px;height:12px;background:var(--ember);flex:none}
+  .light{font-weight:300;letter-spacing:-.04em;line-height:1.04}
+  .ic svg{display:block;width:auto}
+  .marker{position:absolute;z-index:3;display:flex;flex-direction:column;gap:14px;align-items:flex-start}
+  .marker span{font-family:'Geist Mono',monospace;font-size:20px;letter-spacing:.08em;text-transform:uppercase;color:#fff;text-shadow:0 1px 12px rgba(0,0,0,.35)}
+  .marker b{width:26px;height:26px;background:var(--cream);display:grid;place-items:center}
+  .marker b::after{content:"";width:8px;height:8px;border-radius:50%;background:var(--night)}
+  .glass{border-radius:22px;background:rgba(255,255,255,.08);border:1.5px solid rgba(255,255,255,.24);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+  #all{display:flex;gap:40px;padding:60px;width:max-content}
+</style>
+</head>
+<body>
+<div id="all">
+
+<!-- 1 · Annotated project -->
+<div class="post" id="p1" style="background:var(--night)">
+  <img class="img" src="img/avg.jpg" style="transform:scale(3.3);transform-origin:58% 48%">
+  <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(14,26,43,.55) 0%,rgba(14,26,43,.05) 30%,rgba(14,26,43,.1) 50%,rgba(14,26,43,.82) 80%,rgba(14,26,43,.97) 100%)"></div>
+  <div style="position:absolute;left:0;right:0;bottom:0;height:360px;z-index:2;background:linear-gradient(180deg,rgba(14,26,43,0) 0%,#0E1A2B 55%)"></div>
+  <div class="lab" style="position:absolute;left:72px;top:72px;z-index:3"><i></i>Case study · Alex Villas Group</div>
+  <div class="marker" style="left:110px;top:300px"><span>Development pages</span><b></b></div>
+  <div class="marker" style="left:610px;top:430px"><span>Unit CMS</span><b></b></div>
+  <div class="marker" style="left:330px;top:720px"><span>Investor enquiries</span><b></b></div>
+  <div style="position:absolute;left:72px;right:72px;bottom:84px;z-index:3">
+    <div class="light" style="font-size:76px">Every development,<br>always up to date.</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-top:48px">
+      <div class="ic" data-svg="lockup-horizontal-ink" data-h="34" style="color:#fff"></div>
+      <div style="font-size:22px;opacity:.7">Bali, Indonesia</div></div>
+  </div>
+</div>
+
+<!-- 2 · Before / after with glass card -->
+<div class="post" id="p2" style="background:var(--night)">
+  <div class="lab" style="position:absolute;left:72px;top:72px"><i></i>The challenge</div>
+  <div class="light" style="position:absolute;left:72px;top:150px;right:90px;font-size:50px;color:rgba(255,255,255,.55)">Project data was scattered, and every update waited on outside developers.</div>
+  <div style="position:absolute;left:72px;right:72px;top:470px;height:560px;border-radius:26px;overflow:hidden">
+    <img class="img" src="img/avg.jpg" style="filter:blur(26px) saturate(1.2);inset:-60px;width:calc(100% + 120px);height:calc(100% + 120px);object-position:50% 45%">
+    <div class="glass" style="background:rgba(14,26,43,.62);position:absolute;inset:28px;padding:34px;display:flex;flex-direction:column;justify-content:space-between">
+      <div class="lab" style="font-size:18px"><i></i>What we built</div>
+      <svg viewBox="0 0 700 260" fill="none" stroke="#fff" stroke-width="1.6" style="width:100%">
+        <rect x="0" y="0" width="700" height="260" rx="14"/><path d="M0 40H700"/><circle cx="24" cy="20" r="5"/><circle cx="44" cy="20" r="5"/><circle cx="64" cy="20" r="5"/>
+        <rect x="30" y="68" width="300" height="164"/><path d="M30 190L120 130L190 175L250 140L330 200"/><circle cx="270" cy="105" r="14"/>
+        <path d="M360 76H660M360 104H580"/>
+        <rect x="360" y="132" width="90" height="44"/><rect x="465" y="132" width="90" height="44"/><rect x="570" y="132" width="90" height="44"/>
+        <rect x="360" y="188" width="90" height="44"/><rect x="465" y="188" width="90" height="44"/><rect x="570" y="188" width="90" height="44"/>
+      </svg>
+      <div style="font-size:30px;font-weight:300;line-height:1.25">A Framer website with an editable<br>development and unit CMS.</div>
+    </div>
+  </div>
+  <div style="position:absolute;left:72px;right:72px;bottom:84px;display:flex;justify-content:space-between;align-items:flex-end">
+    <div class="light" style="font-size:52px">Now the team runs<br>it themselves.</div>
+    <div class="ic" data-svg="symbol-small-ink" data-h="56" style="color:#fff"></div>
+  </div>
+</div>
+
+<!-- 3 · Client quote -->
+<div class="post" id="p3" style="background:var(--cream);color:var(--night)">
+  <div class="lab" style="position:absolute;left:72px;top:72px"><i></i>In the client's words</div>
+  <div style="position:absolute;left:72px;top:200px;right:72px">
+    <svg width="64" height="48" viewBox="0 0 26 20" fill="#E5602E"><path d="M0 20V11Q0 2 9 0V5Q5 6 5 10H10V20ZM15 20V11Q15 2 24 0V5Q20 6 20 10H25V20Z"/></svg>
+    <div class="light" style="font-size:66px;margin-top:44px">After two years of struggling with agencies and freelancers, he came in with a clear plan and delivered in just six weeks.</div>
+  </div>
+  <div style="position:absolute;left:72px;right:72px;bottom:84px;display:flex;justify-content:space-between;align-items:flex-end">
+    <div style="display:flex;gap:26px;align-items:center">
+      <div style="width:120px;height:120px;border-radius:50%;overflow:hidden;position:relative;background:#ddd"><img src="img/avg.jpg" style="position:absolute;width:984px;left:-642px;top:-588px"></div>
+      <div style="font-size:26px;line-height:1.35"><b style="font-weight:500">Alex Shtefan</b><br><span style="opacity:.6">Founder, Alex Villas Group</span></div>
+    </div>
+    <div class="ic" data-svg="lockup-horizontal-ink" data-h="30" style="color:var(--night)"></div>
+  </div>
+</div>
+
+</div>
+<script>
+const only=location.hash.slice(1);
+if(only){document.querySelectorAll('.post').forEach(p=>{if(p.id!==only)p.style.display='none'});document.getElementById('all').style.padding='0';}
+const cache={}; const get=n=>cache[n]||(cache[n]=fetch(n+'.svg').then(r=>r.text()));
+document.querySelectorAll('[data-svg]').forEach(async el=>{let s=await get(el.dataset.svg);
+  s=s.replace(/#16181D/gi,'currentColor').replace(/\swidth="[^"]*"/,'').replace(/\sheight="[^"]*"/,` height="${el.dataset.h}"`); el.innerHTML=s;});
+</script>
+</body>
+</html>
