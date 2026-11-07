@@ -1,0 +1,8 @@
+{
+  "name": "AV Reference Board",
+  "id": "av-reference-board-local",
+  "api": "1.0.0",
+  "main": "code.js",
+  "editorType": ["figma"],
+  "documentAccess": "dynamic-page"
+}
