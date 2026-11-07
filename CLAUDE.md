@@ -34,6 +34,15 @@ Another Vision (anothervisionlab.com) is an AI-native Framer web studio for real
 - **Working style:** iterate close to what was approved; don't jump to new directions without asking.
 - **Client claims:** don't invent client metrics. Only approved quotes and figures may appear. For Alex Villas, only the Alex Shtefan quote is approved; the "6 weeks" figure on its own is not.
 
+## Figma (the visual source of truth)
+
+- **Master file:** https://www.figma.com/design/IBmXf1HG2ig3bLhm5ufD4L/Another-VIsion-Master-File (on the Figma Starter plan, which allows only 3 pages).
+- **Pages:**
+  - **01 Brand:** cover, logo (editable vectors), the colour variables ("Brand colour" collection), and the Onest/ text styles.
+  - **02 Explorations:** colour boards, Instagram sets including editable Alex Villas posts, and LinkedIn banners.
+  - **03 References & Archive:** references and earlier logo rounds.
+- Use the Figma MCP tools to read the file and make edits. Bind fills to the colour variables and text to the Onest/ styles rather than typing hex values.
+
 ## Layout
 
 | Path | What |
